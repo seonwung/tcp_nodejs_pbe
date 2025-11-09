@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="stage">
+    <h1 class="title">◼ <%= title %></h1>
+
+    <div class="panel">
+      <div class="row">
+        <input id="nick" type="text" placeholder="닉네임(선택)" />
+        <button id="btnNick">닉네임 설정</button>
+        <button id="btnQueue" class="accent">매칭 시작</button>
+      </div>
+
+      <div id="status" class="status">대기 중...</div>
+
+      <div id="battle" class="battle hidden">
+        <div class="players">
+          <div class="player me">
+            <div class="name" id="meName">Me</div>
+            <div class="pick" id="mePick">?</div>
+            <!-- 🆕 승패 배지 -->
+            <img id="meBadge" class="badge hidden" alt="result" />
+          </div>
+          <div class="vs">VS</div>
+          <div class="player opp">
+            <div class="name" id="oppName">Opponent</div>
+            <div class="pick" id="oppPick">?</div>
+            <!-- 🆕 승패 배지 -->
+            <img id="oppBadge" class="badge hidden" alt="result" />
+          </div>
+        </div>
+
+        <div class="controls">
+          <button data-hand="rock">묵(바위)</button>
+          <button data-hand="scissors">찌(가위)</button>
+          <button data-hand="paper">빠(보)</button>
+        </div>
+      </div>
+
+      <div id="result" class="result hidden"></div>
+
+      <!-- 러시안 룰렛 상태(총알 라운드 비공개) -->
+      <div id="roulette" class="panel" style="margin-top:12px;">
+        <div id="rouletteInfo" class="status">룰렛 대기 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Dock (왼쪽 하단 고정) -->
+  <div id="chatDock" class="chat-dock">
+    <div class="chat-header">채팅</div>
+    <ul id="chatList" class="chat-log"></ul>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="메시지를 입력하세요" maxlength="300" />
+      <button id="chatSend" class="accent">전송</button>
+    </div>
+  </div>
+
+  <!-- Socket.IO 클라이언트 -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js" defer></script>
+<!-- new — 패배 오버레이 -->
+  <div id="loseOverlay">
+  <div class="dialog">
+    <div class="imageBox">
+      <img id="loseImg" alt="result" />
+    </div>
+    <div class="footer">
+      <button id="btnExit">나가기</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
