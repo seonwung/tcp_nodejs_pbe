@@ -65,16 +65,19 @@
   <!-- Socket.IO 클라이언트 -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="/client.js" defer></script>
-<!-- new — 패배 오버레이 -->
-  <div id="loseOverlay">
+
+ <!--  승리/패배 영상 오버레이 -->
+<div id="resultOverlay">
   <div class="dialog">
     <div class="imageBox">
-      <img id="loseImg" alt="result" />
+      <img id="resultGif" alt="result" />
     </div>
     <div class="footer">
-      <button id="btnExit">나가기</button>
+      <button id="closeOverlay" class="accent">나가기</button>
     </div>
   </div>
 </div>
+
+
 </body>
 </html>

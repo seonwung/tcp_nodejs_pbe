@@ -156,53 +156,62 @@ socket.on('roulette:bang', ({ round, bulletRound, winner, loser }) => {
   resultEl.classList.remove('hidden');
   resultEl.textContent = `💥 BANG! (총알 라운드: ${bulletRound}) — 라운드 ${round}에서 최종 결정`;
 
-  // (기존) 카드 안 배지 표시는 남겨둠 — 오버레이가 위에서 가려줌
-  if (iAmWinner) {
-    meBadge && (meBadge.src = '/win.png');
-    meBadge?.classList.remove('hidden');
-    oppBadge && (oppBadge.src = '/lose.png');
-    oppBadge?.classList.remove('hidden');
-  } else {
-    meBadge && (meBadge.src = '/lose.png');
-    meBadge?.classList.remove('hidden');
-    oppBadge && (oppBadge.src = '/win.png');
-    oppBadge?.classList.remove('hidden');
-  }
-
   statusEl.textContent = iAmWinner ? '최종 승리! 🎉' : '최종 패배...';
 
-  // new — 승패와 상관없이 오버레이 표시
-  const overlay = document.getElementById('loseOverlay');      // new
-  const img = document.getElementById('loseImg');              // new
-  if (overlay && img) {                                        // new
-    img.src = iAmWinner ? '/win.png' : '/lose.png';            // new (둘 다 같은 창에 이미지만 교체)
-    overlay.classList.add('show');                             // new
-  }                                                            // new
-});
-// new — 나가기 버튼 동작(새로고침으로 초기화)
-btnExit.addEventListener('click', () => {
-  const overlay = document.getElementById('loseOverlay');
-  if (overlay) overlay.classList.remove('show');
+  // 🎞️ 오버레이 GIF 표시
+  const overlay = document.getElementById('resultOverlay');
+  const gif = document.getElementById('resultGif');
+  gif.src = iAmWinner ? '/win.gif' : '/lose.gif';
 
-  // 게임 화면 숨기기
+  overlay.classList.add('show');
+
+  // “나가기” 버튼으로 닫기
+  document.getElementById('closeOverlay').onclick = () => {
+  overlay.classList.remove('show');
+
+  // 🎯 오버레이 닫을 때 게임 전체 초기화
   battle.classList.add('hidden');
   resultEl.classList.add('hidden');
   roulPanel.classList.add('hidden');
 
-  // 텍스트 초기화
   statusEl.textContent = '대기 중...';
   mePick.textContent = '?';
   oppPick.textContent = '?';
   meBadge?.classList.add('hidden');
   oppBadge?.classList.add('hidden');
 
-  // 소켓 정리 및 초기화
-  socket.emit('leave_game'); // new: 서버로 종료 알림 (옵션)
-  socket.data = {};          // new: 남은 room 정보 제거
+  socket.emit('leave_game'); // 서버에 종료 알림
+  socket.data = {};          // 클라이언트 room 데이터 제거
+};
 
-  // 완전 초기화하려면 아래도 가능 (리로딩)
-  // location.reload();  
 });
+
+
+
+// new — 나가기 버튼 동작(새로고침으로 초기화)
+// btnExit.addEventListener('click', () => {
+//   const overlay = document.getElementById('loseOverlay');
+//   if (overlay) overlay.classList.remove('show');
+
+//   // 게임 화면 숨기기
+//   battle.classList.add('hidden');
+//   resultEl.classList.add('hidden');
+//   roulPanel.classList.add('hidden');
+
+//   // 텍스트 초기화
+//   statusEl.textContent = '대기 중...';
+//   mePick.textContent = '?';
+//   oppPick.textContent = '?';
+//   meBadge?.classList.add('hidden');
+//   oppBadge?.classList.add('hidden');
+
+//   // 소켓 정리 및 초기화
+//   socket.emit('leave_game'); // new: 서버로 종료 알림 (옵션)
+//   socket.data = {};          // new: 남은 room 정보 제거
+
+//   // 완전 초기화하려면 아래도 가능 (리로딩)
+//   // location.reload();  
+// });
 
 // (예외) 5판이 모두 끝났는데도 못 터진 경우(거의 없음)
 socket.on('match:end', ({ score, winner }) => {
