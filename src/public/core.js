@@ -9,8 +9,8 @@ const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 // 3) 자주 쓰는 요소들 캐싱 (게임 + 채팅 공용)
-const nickInput = $('#nick');
-const btnNick   = $('#btnNick');
+
+
 const btnQueue  = $('#btnQueue');
 const statusEl  = $('#status');
 const battle    = $('#battle');

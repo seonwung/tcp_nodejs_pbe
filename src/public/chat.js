@@ -1,4 +1,3 @@
-// chat.js : 채팅 기능 전담
 // === 채팅창 드래그 리사이즈 ===
 if (chatDock && resizeBar) {
   let isDragging = false;
@@ -20,7 +19,16 @@ if (chatDock && resizeBar) {
     startHeight = chatDock.getBoundingClientRect().height; 
     //getBoundingClientRect()
     //이건 현재 요소의 위치/크기를 픽셀 단위로 알려주는 브라우저 내장 함수.
-
+// {
+//   x: 16,
+//   y: 560,
+//   width: 320,
+//   height: 200,   <--이걸 가져옴
+//   top: 560,
+//   left: 16,
+//   bottom: 760,
+//   right: 336 이런식으로
+// }
     // JS가 높이 컨트롤하게 max-height 잠깐 제거
     chatDock.style.maxHeight = 'none';
 

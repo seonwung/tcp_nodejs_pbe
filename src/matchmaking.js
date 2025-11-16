@@ -1,7 +1,11 @@
+import pool from './db.js';   //db가져오기
+
+
 // 대기열(queue) 에 사람을 넣고,
 // 2명이 모이면 방(room) 을 만들고,
 // 각자 낸 패(pick)를 받아 승패를 계산해 알리고,
 // 방을 정리(endRoom), 접속 종료 시 처리(leave)까지.
+
 
 export function createMatchMaker(io) { // http위에 소켓io가 올라와있고 그걸 주입받아 게임/매칭 알림 쏘는 모듈
   const queue = [];// 선입 선출 소켓의 id를 넣는곳
@@ -9,9 +13,23 @@ export function createMatchMaker(io) { // http위에 소켓io가 올라와있고
 
   let roomCount = 0;
 
-  function joinQueue(socket) {// 게임하겠따
+  function joinQueue(socket) {// 게임하겠다 
+    
     if (socket.data.roomId) return; // socket.data.roomId 는  socket.data가 socket.io가 사용자 정의할수있게 만듬 
     if (queue.includes(socket.id)) return;// 대기열에 이미있으면 중복방지?
+    const myUid = socket.data.userId ?? null;
+
+      if (myUid != null) {
+    const dupExists = queue.some(id => {
+      const s = io.sockets.sockets.get(id);
+      return s && s.data.userId === myUid;
+    });
+
+    if (dupExists) {
+      socket.emit('system:info', '같은 계정으로는 두 번 동시에 매칭할 수 없습니다.');
+      return;
+    }
+  }
 
     queue.push(socket.id); //소켓의 id를 푸쉬하고
     socket.emit('queue:joined');// 클라이언트로 보냄
@@ -28,6 +46,19 @@ export function createMatchMaker(io) { // http위에 소켓io가 올라와있고
 //    '소켓ID3' → socket객체3,
 //    ...
 //      }
+
+ //  같은 계정이면 매칭 금지
+   if (
+  s1.data.userId != null &&          // null 또는 undefined 아닌지 체크
+  s2.data.userId != null &&
+  s1.data.userId === s2.data.userId  // 두 유저의 userId가 같으면 동일 계정
+) {
+      // 같은 사람 → 큐로 다시 돌려보내기
+ s1.emit('system:info', '같은 계정끼리는 서로 매칭할 수 없습니다.');
+      s2.emit('system:info', '같은 계정끼리는 서로 매칭할 수 없습니다.');
+      return; // 매칭 안 하고 종료
+    }
+
       const roomId =  `room_${++roomCount}`;//대충 두사람의 방이라는거겠지? 나중에 좀더 복잡으로 바꿔볼까?
       s1.join(roomId); // join은 방에 소켓유저를 넣는기능
       s2.join(roomId);
@@ -190,6 +221,8 @@ console.log(`[PICK] room=${roomId} round=${room.round ?? '?'} nick=${nick} id=${
         winner,
         loser
       });
+      
+      applyRatingResult(winner, loser);
       endRoom(roomId);
       return;
     }
@@ -199,4 +232,54 @@ console.log(`[PICK] room=${roomId} round=${room.round ?? '?'} nick=${nick} id=${
     room.picks = new Map();
     setTimeout(() => nextRound(roomId), 800);
   }
+
+    // ============================
+  //   MMR 업데이트 헬퍼 함수
+  // ============================
+  async function applyRatingResult(winnerSid, loserSid) {
+    try {
+      const winnerSocket = io.sockets.sockets.get(winnerSid);
+      const loserSocket  = io.sockets.sockets.get(loserSid);
+
+      // 로그인 안 한 게스트면 MMR 안 건드림
+      const winnerUserId = winnerSocket?.data?.userId;
+      const loserUserId  = loserSocket?.data?.userId;
+      if (!winnerUserId || !loserUserId) {
+        console.log('게스트이거나 userId 없음 → MMR 업데이트 스킵');
+        return;
+      }
+
+      // 점수 규칙 읽기 (없으면 기본값 100 / -50 사용)
+      const [rows] = await pool.query(
+        'SELECT win_points, lose_points FROM rating_rules WHERE id = 1'
+      );
+      const rule = rows[0] || { win_points: 100, lose_points: -50 };
+
+      const winDelta  = rule.win_points;
+      const loseDelta = rule.lose_points;
+
+      // 승자 MMR 증가
+      await pool.query(
+        'UPDATE users SET mmr = GREATEST(0, mmr + ?) WHERE id = ?',
+        [winDelta, winnerUserId]
+      );
+
+      // 패자 MMR 감소
+      await pool.query(
+        'UPDATE users SET mmr = GREATEST(0, mmr + ?) WHERE id = ?',
+        [loseDelta, loserUserId]
+      );
+
+      // 선택: 결과를 소켓으로 알려주기 (원하면 UI에서 쓸 수 있음)
+      winnerSocket?.emit('rating:update', { delta: winDelta });
+      loserSocket?.emit('rating:update',  { delta: loseDelta });
+
+      console.log(
+        `MMR 업데이트 완료: winner ${winnerUserId} (${winDelta}), loser ${loserUserId} (${loseDelta})`
+      );
+    } catch (err) {
+      console.error('MMR update error:', err);
+    }
+  }
+
 }

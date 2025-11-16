@@ -5,20 +5,52 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title><%= title %></title>
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
 </head>
 <body>
+  <!-- 상단바-->
+    <header class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="logo-small">RPS ROULETTE</a>
+    </div>
+    <nav class="topbar-right">
+      <% if (!currentUser) { %>
+        <!-- 로그인 전 -->
+        <button type="button" onclick="location.href='/login'">로그인</button>
+        <button type="button" onclick="location.href='/signup'">회원가입</button>
+      <% } else { %>
+        <% if (currentUser.role === 'admin') { %>
+          <button type="button" onclick="location.href='/admin'">관리자 페이지</button>
+        <% } else { %>
+          <button type="button" onclick="location.href='/mypage'">마이페이지</button>
+        <% } %>
+        <form action="/logout" method="post" style="display:inline;">
+          <button type="submit">로그아웃</button>
+        </form>
+      <% } %>
+    </nav>
+  </header>
   <div class="stage">
     <h1 class="title">◼ <%= title %></h1>
+ 
+  <!-- 가위바위보 박스 -->
+  <div class="rps-box">
+    <div class="rps-strip">
+       
+    <div class="rps-slot">✊</div>
+<div class="rps-slot">✌️</div>
+<div class="rps-slot">✋</div>
 
-    <div class="panel">
-      <div class="row">
-        <input id="nick" type="text" placeholder="닉네임(선택)" />
-        <button id="btnNick">닉네임 설정</button>
-        <button id="btnQueue" class="accent">매칭 시작</button>
-      </div>
+    </div>
+  </div>
 
-      <div id="status" class="status">대기 중...</div>
+    <!-- 매칭 시작 버튼  -->
+  <div class="match-row">
+    <button id="btnQueue" class="accent main-match-btn">매칭 시작</button>
+  </div>
 
+  <div id="status" class="status">대기 중...</div>
       <div id="battle" class="battle hidden">
         <div class="players">
           <div class="player me">
@@ -62,6 +94,9 @@
       <button id="chatSend" class="accent">전송</button>
     </div>
   </div>
+ <script>
+    window.currentUser = <%- JSON.stringify(currentUser || null) %>;
+  </script>
 
   <!-- Socket.IO 클라이언트 -->
   <script src="/socket.io/socket.io.js"></script>

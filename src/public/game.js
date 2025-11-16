@@ -1,12 +1,31 @@
 // game.js : 매칭 / 라운드 / 룰렛 / 결과 표시 담당
+// ====================== 자동 닉네임 설정 =========================
+// 로그인 유저면 DB 닉네임, 비로그인 유저면 'Guest' 로 설정
+(function initNickname() {
+  const user = window.currentUser; // index.ejs에서 내려줌
+  const nick = user && user.nickname
+    ? String(user.nickname).trim().slice(0, 16)
+    : 'Guest';
 
-// 닉네임 설정
-btnNick?.addEventListener('click', () => {
-  const nick = nickInput.value.trim();
   socket.emit('set_nick', nick);
-  statusEl.textContent = '닉네임 설정 완료.';
-});
 
+  // 상태창에 현재 닉네임 안내 (선택 사항)
+  if (statusEl) {
+    if (user) {
+      statusEl.textContent = `로그인 닉네임: ${nick}`;
+    } else {
+      statusEl.textContent = `로그인하지 않아 Guest 닉네임으로 매칭됩니다.`;
+    }
+  }
+})();
+// ===============================================================
+
+socket.on('connect', () => {
+  socket.emit('login_info', {
+    userId: window.currentUser ? window.currentUser.id : null,
+    nickname: window.currentUser ? window.currentUser.nickname : "Guest"
+  });
+});
 // 매칭 시작
 btnQueue?.addEventListener('click', () => {
   // 결과 영역 초기화
@@ -27,6 +46,9 @@ btnQueue?.addEventListener('click', () => {
   }
 
   statusEl.textContent = '매칭 대기 중...';
+  if (btnQueue) {
+    btnQueue.classList.add('hidden');   // 매칭 시작 버튼 숨기기
+  }
   socket.emit('join_queue');
 });
 
@@ -121,6 +143,10 @@ socket.on('match:reveal', ({ picks, winner, round }) => {
 
 // 최종 BANG!
 socket.on('roulette:bang', ({ round, bulletRound, winner, loser }) => {
+  if (roundTimerId) {
+    clearInterval(roundTimerId);
+    roundTimerId = null;
+  }
   const iAmWinner = (winner === socket.id);
 
   resultEl.classList.remove('hidden');
@@ -146,7 +172,8 @@ socket.on('roulette:bang', ({ round, bulletRound, winner, loser }) => {
       resultEl.classList.add('hidden');
       roulPanel.classList.add('hidden');
 
-      statusEl.textContent = '대기 중...';
+     roulPanel.classList.remove('hidden');      
+  roulInfo.textContent = '룰렛 대기 중...';  
       mePick.textContent   = '?';
       oppPick.textContent  = '?';
       meBadge?.classList.add('hidden');
@@ -154,6 +181,9 @@ socket.on('roulette:bang', ({ round, bulletRound, winner, loser }) => {
 
       socket.emit('leave_game'); // 서버에 방 나가기 알림
       // 클라이언트 측 socket.data는 굳이 건들 필요 없음
+       if (btnQueue) {
+      btnQueue.classList.remove('hidden');   // 매칭 버튼 다시 표시
+    }
     };
   }
 });
@@ -175,3 +205,6 @@ socket.on('match:abort', () => {
 socket.on('system:info', (msg) => {
   statusEl.textContent = msg;
 });
+
+
+

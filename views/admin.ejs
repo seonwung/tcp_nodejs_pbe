@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="logo-small">RPS SQUID</a>
+    </div>
+    <div class="topbar-right">
+      <a href="/mypage">
+        <button type="button">마이페이지</button>
+      </a>
+      <form action="/logout" method="post">
+        <button type="submit">로그아웃</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="panel admin-panel">
+      <h2 class="title">관리자 페이지</h2>
+
+      <!-- 1. 레이팅 규칙 설정 -->
+      <section class="admin-section">
+        <h3 class="admin-section-title">레이팅 규칙 설정</h3>
+        <form action="/admin/rating-rules" method="post" class="admin-rules-form">
+          <div class="admin-rules-grid">
+            <div class="admin-field">
+              <label for="win_points">승리 시 점수</label>
+              <input type="number" id="win_points" name="win_points"
+                     value="<%= rules.win_points %>" />
+            </div>
+            <div class="admin-field">
+              <label for="lose_points">패배 시 점수</label>
+              <input type="number" id="lose_points" name="lose_points"
+                     value="<%= rules.lose_points %>" />
+            </div>
+            <div class="admin-field">
+              <label for="draw_points">무승부 시 점수(방어용 일어날일 x)</label>
+              <input type="number" id="draw_points" name="draw_points"
+                     value="<%= rules.draw_points %>" />
+            </div>
+          </div>
+          <button type="submit" class="accent admin-save-btn">저장하기</button>
+        </form>
+      </section>
+
+      <!-- 2. 유저 목록 -->
+      <section class="admin-section">
+        <h3 class="admin-section-title">유저 목록</h3>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>아이디</th>
+                <th>닉네임</th>
+                <th>티어</th>
+                <th>MMR</th>
+                <th>권한</th>
+                <th>가입일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (users.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="admin-table-empty">
+                    등록된 유저가 없습니다.
+                  </td>
+                </tr>
+              <% } else { %>
+                <% users.forEach(u => { %>
+                  <tr>
+                    <td><%= u.id %></td>
+                    <td><%= u.username %></td>
+                    <td><%= u.nickname || '-' %></td>
+                    <td>
+                      <div class="admin-tier-cell">
+                        <% if (u.tier_image) { %>
+                          <img src="<%= u.tier_image %>" 
+                               alt="<%= u.tier_name %>" 
+                               class="admin-tier-img" />
+                        <% } %>
+                        <span><%= u.tier_name || 'UNRANKED' %></span>
+                      </div>
+                    </td>
+                    <td><%= u.mmr %></td>
+                    <td><%= u.role || 'user' %></td>
+                    <td>
+                      <% if (u.created_at) { %>
+                        <%= u.created_at.toISOString().slice(0,10) %>
+                      <% } else { %>
+                        -
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</body>
+</html>

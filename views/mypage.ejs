@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- 상단 네비는 기존이랑 똑같이 -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="/" class="logo-small">RPS SQUID</a>
+    </div>
+    <div class="topbar-right">
+      <form action="/logout" method="post">
+        <button type="submit">로그아웃</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="panel mypage-card">
+      <h2 class="title">마이페이지</h2>
+
+      <div class="mypage-main">
+        <!-- 왼쪽: 프로필 정보 -->
+        <div class="mypage-profile">
+          <div class="mypage-avatar">
+            <span><%= (user.nickname || user.username).charAt(0).toUpperCase() %></span>
+          </div>
+
+          <div class="mypage-info">
+            <div class="mypage-nickname">
+              <%= user.nickname || user.username %>
+            </div>
+            <div class="mypage-username">
+              @<%= user.username %>
+            </div>
+
+            <div class="mypage-rating-row">
+              <div class="rating-label">레이팅</div>
+              <div class="rating-value"><%= user.mmr %></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 티어 카드 -->
+        <div class="mypage-tier">
+          <div class="tier-label">현재 티어</div>
+
+          <% if (user.tierImage) { %>
+            <div class="tier-image-wrap">
+              <img src="<%= user.tierImage %>" alt="<%= user.tierName %>" />
+            </div>
+          <% } else { %>
+            <div class="tier-image-wrap tier-empty">
+              티어 정보 없음
+            </div>
+          <% } %>
+
+          <div class="tier-name">
+            <%= user.tierName || 'UNRANKED' %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 아래: 닉네임 변경 폼 -->
+      <div class="mypage-nick-form">
+        <form action="/mypage/nickname" method="post">
+          <label for="nickname">닉네임 변경</label>
+          <div class="row">
+            <input type="text" id="nickname" name="nickname"
+                   placeholder="새 닉네임"
+                   value="<%= user.nickname || '' %>" />
+            <button type="submit" class="accent">변경</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
