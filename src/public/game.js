@@ -252,4 +252,8 @@ socket.on('match:abort', () => {
 // 시스템 메시지 (위쪽 상태창에만 표시)
 socket.on('system:info', (msg) => {
     statusEl.textContent = msg;
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 4d7cc5af49d7724398f56540bc4402290991fa9a

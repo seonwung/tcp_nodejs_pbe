@@ -5,7 +5,11 @@ import { Server } from 'socket.io'; // 브라우저와 실시간 데이터를 �
 import path from 'path'; // 경로 관련 도우미
 import { fileURLToPath } from 'url'; // es모듈에서 __dirname이 없기 때문에 현재 파일 경로 알아내기
 import { createMatchMaker } from './matchmaking.js'; // 게임/매칭 로직 모듈
+<<<<<<< HEAD
 import authRouter from './routes/authRoutes.js';
+=======
+import authRouter from '../routes/authRoutes.js';
+>>>>>>> 4d7cc5af49d7724398f56540bc4402290991fa9a
 import session from 'express-session';
 import mysql from 'mysql2/promise'; // MySQL 연동
 
@@ -197,4 +201,8 @@ io.on('connection', (socket) => {
 });
 
 const PORT = Number(process.env.WEB_PORT || 3000);
+<<<<<<< HEAD
 server.listen(PORT, () => console.log(`✅ http://localhost:${PORT}`));
+=======
+server.listen(PORT, () => console.log(`✅ http://localhost:${PORT}`));
+>>>>>>> 4d7cc5af49d7724398f56540bc4402290991fa9a
