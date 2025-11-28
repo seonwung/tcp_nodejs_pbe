@@ -1,4 +1,5 @@
-import pool from '../src/db.js';
+import pool from '../db.js';
+
 
 // 관리자 메인 페이지: 유저 목록 + 레이팅 규칙
 export async function getAdminPage(req, res) {

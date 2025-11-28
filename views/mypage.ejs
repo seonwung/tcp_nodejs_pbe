@@ -29,7 +29,7 @@
             <span><%= (user.nickname || user.username).charAt(0).toUpperCase() %></span>
           </div>
 
-          <div class="mypage-info">
+          <div class="mypage-info">   
             <div class="mypage-nickname">
               <%= user.nickname || user.username %>
             </div>
@@ -44,25 +44,44 @@
           </div>
         </div>
 
-        <!-- 오른쪽: 티어 카드 -->
-        <div class="mypage-tier">
-          <div class="tier-label">현재 티어</div>
+     <!-- 오른쪽: 티어 카드 -->
+<div class="mypage-tier">
+  <div class="tier-label">현재 티어</div>
 
-          <% if (user.tierImage) { %>
-            <div class="tier-image-wrap">
-              <img src="<%= user.tierImage %>" alt="<%= user.tierName %>" />
-            </div>
-          <% } else { %>
-            <div class="tier-image-wrap tier-empty">
-              티어 정보 없음
-            </div>
-          <% } %>
+  <!-- 티어 이미지 출력 -->
+  <!-- user.tierName 값에 따라 알맞은 이미지 선택 -->
+  <div class="tier-image-wrap">
+    <% if (user.tierName === 'BRONZE') { %>
+      <img src="/bronze.jpg" alt="BRONZE" />
 
-          <div class="tier-name">
-            <%= user.tierName || 'UNRANKED' %>
-          </div>
-        </div>
+    <% } else if (user.tierName === 'SILVER') { %>
+      <img src="/silver.jpg" alt="SILVER" />
+
+    <% } else if (user.tierName === 'GOLD') { %>
+      <img src="/gold.jpg" alt="GOLD" />
+
+    <% } else if (user.tierName === 'PLATINUM') { %>
+      <img src="/platinum.jpg" alt="PLATINUM" />
+
+    <% } else if (user.tierName === 'DIAMOND') { %>
+      <img src="/diamond.jpg" alt="DIAMOND" />
+
+    <% } else if (user.tierName === 'MASTER') { %>
+      <img src="/master.jpg" alt="MASTER" />
+
+    <% } else { %>
+      <!-- 티어 정보 없음일 때 -->
+      <div class="tier-image-wrap tier-empty">
+        티어 정보 없음
       </div>
+    <% } %>
+  </div>
+
+  <!-- 티어 이름 출력 -->
+  <div class="tier-name">
+    <%= user.tierName || 'UNRANKED' %>
+  </div>
+</div>
 
       <!-- 아래: 닉네임 변경 폼 -->
       <div class="mypage-nick-form">
@@ -79,5 +98,6 @@
 
     </div>
   </div>
+
 </body>
 </html>

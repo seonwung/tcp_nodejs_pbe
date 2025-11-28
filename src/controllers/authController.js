@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
-import pool from '../src/db.js';
+import pool from '../db.js';
+
+
 
 export async function getLogin(req, res) {
   if (req.session.user) return res.redirect('/');

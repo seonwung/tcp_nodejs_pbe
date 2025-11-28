@@ -6,11 +6,10 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-
 </head>
 <body>
-  <!-- 상단바-->
-    <header class="topbar">
+  <!-- 상단바 -->
+  <header class="topbar">
     <div class="topbar-left">
       <a href="/" class="logo-small">RPS ROULETTE</a>
     </div>
@@ -31,91 +30,90 @@
       <% } %>
     </nav>
   </header>
+
   <div class="stage">
     <h1 class="title">◼ <%= title %></h1>
- 
-  <!-- 가위바위보 박스 -->
-  <div class="rps-box">
-    <div class="rps-strip">
-       
-    <div class="rps-slot">✊</div>
-<div class="rps-slot">✌️</div>
-<div class="rps-slot">✋</div>
 
+    <!-- 가위바위보 박스 -->
+    <div class="rps-box">
+      <div class="rps-strip">
+        <div class="rps-slot">✊</div>
+        <div class="rps-slot">✌️</div>
+        <div class="rps-slot">✋</div>
+      </div>
     </div>
-  </div>
 
-    <!-- 매칭 시작 버튼  -->
-  <div class="match-row">
-    <button id="btnQueue" class="accent main-match-btn">매칭 시작</button>
-  </div>
+    <!-- 매칭 시작 / 취소 버튼 -->
+    <div class="match-row">
+      <button id="btnQueue" class="accent main-match-btn">매칭 시작</button>
+      <button id="btnCancel" class="accent cancel-match-btn hidden">매칭 취소</button>
+    </div>
 
-  <div id="status" class="status">대기 중...</div>
-      <div id="battle" class="battle hidden">
-        <div class="players">
-          <div class="player me">
-            <div class="name" id="meName">Me</div>
-            <div class="pick" id="mePick">?</div>
-            <!-- 🆕 승패 배지 -->
-            <img id="meBadge" class="badge hidden" alt="result" />
-          </div>
-          <div class="vs">VS</div>
-          <div class="player opp">
-            <div class="name" id="oppName">Opponent</div>
-            <div class="pick" id="oppPick">?</div>
-            <!-- 🆕 승패 배지 -->
-            <img id="oppBadge" class="badge hidden" alt="result" />
-          </div>
+    <div id="status" class="status">대기 중...</div>
+
+    <div id="battle" class="battle hidden">
+      <div class="players">
+        <div class="player me">
+          <div class="name" id="meName">Me</div>
+          <div class="pick" id="mePick">?</div>
+          <!-- 🆕 승패 배지 -->
+          <img id="meBadge" class="badge hidden" alt="result" />
         </div>
-
-        <div class="controls">
-          <button data-hand="rock">묵(바위)</button>
-          <button data-hand="scissors">찌(가위)</button>
-          <button data-hand="paper">빠(보)</button>
+        <div class="vs">VS</div>
+        <div class="player opp">
+          <div class="name" id="oppName">Opponent</div>
+          <div class="pick" id="oppPick">?</div>
+          <!-- 🆕 승패 배지 -->
+          <img id="oppBadge" class="badge hidden" alt="result" />
         </div>
       </div>
 
-      <div id="result" class="result hidden"></div>
-
-      <!-- 러시안 룰렛 상태(총알 라운드 비공개) -->
-      <div id="roulette" class="panel" style="margin-top:12px;">
-        <div id="rouletteInfo" class="status">룰렛 대기 중...</div>
+      <div class="controls">
+        <button data-hand="rock">묵(바위)</button>
+        <button data-hand="scissors">찌(가위)</button>
+        <button data-hand="paper">빠(보)</button>
       </div>
+    </div>
+
+    <div id="result" class="result hidden"></div>
+
+    <!-- 러시안 룰렛 상태 -->
+    <div id="roulette" class="panel" style="margin-top:12px;">
+      <div id="rouletteInfo" class="status">룰렛 대기 중...</div>
     </div>
   </div>
 
-  <!-- Chat Dock (왼쪽 하단 고정) -->
+  <!-- Chat Dock -->
   <div id="chatDock" class="chat-dock">
     <div class="chat-header">채팅</div>
-     <div id="chatResize" class="chat-resize-bar"></div>
+    <div id="chatResize" class="chat-resize-bar"></div>
     <ul id="chatList" class="chat-log"></ul>
     <div class="chat-input-row">
       <input id="chatInput" type="text" placeholder="메시지를 입력하세요" maxlength="300" />
       <button id="chatSend" class="accent">전송</button>
     </div>
   </div>
- <script>
+
+  <script>
     window.currentUser = <%- JSON.stringify(currentUser || null) %>;
   </script>
 
   <!-- Socket.IO 클라이언트 -->
   <script src="/socket.io/socket.io.js"></script>
- 
-<script src="/core.js" defer></script>
-<script src="/game.js" defer></script>
-<script src="/chat.js" defer></script>
- <!--  승리/패배 영상 오버레이 -->
-<div id="resultOverlay">
-  <div class="dialog">
-    <div class="imageBox">
-      <img id="resultGif" alt="result" />
-    </div>
-    <div class="footer">
-      <button id="closeOverlay" class="accent">나가기</button>
+  <script src="/core.js" defer></script>
+  <script src="/game.js" defer></script>
+  <script src="/chat.js" defer></script>
+
+  <!-- 승리/패배 영상 오버레이 -->
+  <div id="resultOverlay">
+    <div class="dialog">
+      <div class="imageBox">
+        <img id="resultGif" alt="result" />
+      </div>
+      <div class="footer">
+        <button id="closeOverlay" class="accent">나가기</button>
+      </div>
     </div>
   </div>
-</div>
-
-
 </body>
 </html>
