@@ -1,6 +1,16 @@
 // game.js : 매칭 / 라운드 / 룰렛 / 결과 표시 담당
 // ====================== 자동 닉네임 설정 =========================
 // 로그인 유저면 DB 닉네임, 비로그인 유저면 'Guest' 로 설정
+
+function applyTierBadge() {
+  // 로그인 안 했거나 tier 이미지 없으면 그냥 무시
+  if (!window.currentUser || !window.currentUser.tier_image) return;
+
+  if (meBadge) {
+    meBadge.src = window.currentUser.tier_image;  // 세션에서 내려준 경로
+    meBadge.classList.remove('hidden');           // 표시
+  }
+}
 (function initNickname() {
   const user = window.currentUser; // index.ejs에서 내려줌
   const nick = user && user.nickname
@@ -70,6 +80,7 @@ socket.on('match:ready', ({ roomId, players }) => {
 
   meName.textContent  = me?.nick  || 'Me';
   oppName.textContent = opp?.nick || 'Opponent';
+    applyTierBadge();
 });
 
 // 룰렛 안내 (몇 판 중에 터질지 모른다는 설명)

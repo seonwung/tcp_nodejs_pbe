@@ -5,7 +5,7 @@ import { Server } from 'socket.io'; // 브라우저와 실시간으로 데이터
 import path from 'path'; // 경로 관련 도우미
 import { fileURLToPath } from 'url'; // es모듈에서 __dirname이 없기때문에 현재 파일 경로 알아내기
 import { createMatchMaker } from './matchmaking.js'; // 서버부터보는거 맞아? 딴대서 가져오는데?
-import authRouter from '../routes/authRoutes.js';
+import authRouter from './routes/authRoutes.js';
 import session from 'express-session';
 
 const __filename = fileURLToPath(import.meta.url);

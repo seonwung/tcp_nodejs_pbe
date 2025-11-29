@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import pool from '../src/db.js';
+import pool from '../db.js';
 
 export async function getLogin(req, res) {
   if (req.session.user) return res.redirect('/');
@@ -30,6 +30,8 @@ export async function postLogin(req, res) {
       role: user.role,
       mmr: user.mmr,
       nickname: user.nickname, 
+        tier_name: user.tier_name,   
+  tier_image: user.tier_image, 
     };
 
     if (user.role === 'admin') return res.redirect('/admin');
